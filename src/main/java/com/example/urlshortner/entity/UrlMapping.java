@@ -43,4 +43,8 @@ public class UrlMapping {
 
     @Column(name = "click_count", nullable = false)
     private Long clickCount = 0L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

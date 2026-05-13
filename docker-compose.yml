@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:16
+
+    container_name: urlshortner-db
+
+    environment:
+      POSTGRES_DB: urlshortner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+    ports:
+      - "5433:5432"
+
+  app:
+    build: .
+
+    container_name: urlshortner-app
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/urlshortner
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password

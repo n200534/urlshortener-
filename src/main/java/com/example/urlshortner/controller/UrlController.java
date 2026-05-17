@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,8 @@ public class UrlController {
 
     private final UrlService urlService;
     private final RateLimitService rateLimitService;
-
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @Operation(summary = "Shortens the Long URL into Shorter Onnes")
     @PostMapping("/api/shorten")
@@ -39,8 +41,7 @@ public class UrlController {
 
         String shortKey = urlService.shortenUrl(request);
 
-        String shortUrl =
-                "http://localhost:8080/u/" + shortKey;
+        String shortUrl = baseUrl + "/u/" + shortKey;
 
         ApiResponse<String> response =
                 ApiResponse.<String>builder()

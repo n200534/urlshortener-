@@ -1,213 +1,236 @@
-
 # 🔗 URL Shortener Service
 
-A scalable and production-style URL shortening service built using **Spring Boot** and **PostgreSQL**.
+A production-style backend application built using Spring Boot that allows users to shorten URLs, create custom aliases, track analytics, and manage their own links securely using JWT authentication.
 
-Supports custom aliases, expiration logic, click analytics, and structured API responses.
-
-Designed with clean architecture and system design principles suitable for SDE-1 backend roles.
+The project focuses on backend engineering concepts such as authentication, caching, rate limiting, database optimization, Docker deployment, and REST API design.
 
 ---
 
-## 🚀 Features
+# 🚀 Live Demo
 
-* 🔗 Shorten long URLs
-* 🏷 Custom alias support
-* ⏳ Expiration time support
-* 📊 Click analytics tracking
-* ⚡ Indexed database lookups for fast redirects
-* 🧠 Sequence-based unique ID generation (collision-free)
-* 🧱 Layered architecture (Controller → Service → Repository)
-* 🛡 Global exception handling
-* 📦 Standardized API response wrapper
-* 🗄 PostgreSQL persistence
+## Swagger/OpenAPI Documentation
+
+[Live Swagger Docs](https://urlshortener-fjvb.onrender.com/swagger-ui/index.html)
 
 ---
 
-## 🏗 Architecture Overview
+# ✨ Features
 
-### High-Level Architecture
+## 🔐 Authentication & Security
 
-```
-Client
-   ↓
-Spring Boot Application
-   ↓
-PostgreSQL Database
-```
+* User Registration & Login
+* JWT-based Authentication
+* Password hashing using BCrypt
+* Protected APIs using Spring Security
+* User-specific URL ownership
 
 ---
 
-### Redirect Flow (Read-Heavy Optimized)
+## 🔗 URL Shortening
 
-```
-GET /u/{shortKey}
-        ↓
-Find by indexed short_key
-        ↓
-Increment click count
-        ↓
-HTTP 302 Redirect to original URL
+* Generate short URLs using Base62 encoding
+* Sequence-based unique key generation
+* HTTP 302 redirection
+* Custom alias support
+* Expiry time for URLs
+
+Example:
+
+```text id="d3h5jp"
+https://google.com
+↓
+https://urlshortener-fjvb.onrender.com/u/google
 ```
 
-The `short_key` column is indexed to optimize lookup performance for redirect operations.
+---
+
+## 📊 Analytics
+
+* Click count tracking
+* URL creation timestamp
+* Expiration tracking
+* User-specific URL listing
 
 ---
 
-## 🧠 Design Decisions
+## ⚡ Performance Optimizations
 
-### 1️⃣ Unique Short Key Generation
-
-* Uses PostgreSQL sequence for globally unique ID generation.
-* Encodes numeric ID using Base62.
-* Guarantees no collisions.
-* Avoids hash collision risks.
+* Indexed database lookups
+* In-memory caching using Spring Cache
+* Fixed-window rate limiting
+* Optimized read-heavy redirect flow
 
 ---
 
-### 2️⃣ Custom Alias Support
+## 📦 API & Architecture
 
-* Optional custom short key.
-* Enforced uniqueness via database constraint.
-* Returns conflict if alias already exists.
+* RESTful API design
+* Layered Architecture
 
----
-
-### 3️⃣ Expiration Logic
-
-* Optional expiry time per URL.
-* Expired URLs are blocked at redirect time.
-* Business validation handled in service layer.
+  * Controller
+  * Service
+  * Repository
+* DTO-based request/response handling
+* Global exception handling
+* Standardized API response wrapper
 
 ---
 
-### 4️⃣ Analytics Tracking
+## 📖 API Documentation
 
-* Tracks total redirect count.
-* Analytics endpoint provides usage insights.
-
----
-
-## 📊 API Endpoints
+* Swagger/OpenAPI integration
+* Interactive API testing UI
+* JWT authorization support inside Swagger
 
 ---
 
-### 🔹 Create Short URL
+## 🐳 Deployment & DevOps
 
-**POST** `/api/shorten`
+* Dockerized Spring Boot application
+* Multi-stage Docker build
+* Cloud deployment on Render
+* Environment variable configuration
+* PostgreSQL cloud integration
 
-Request:
+---
 
-```json
+# 🛠 Tech Stack
+
+| Category      | Technologies               |
+| ------------- | -------------------------- |
+| Language      | Java 17                    |
+| Backend       | Spring Boot                |
+| Security      | Spring Security, JWT       |
+| Database      | PostgreSQL                 |
+| ORM           | Spring Data JPA, Hibernate |
+| Build Tool    | Maven                      |
+| Documentation | Swagger / OpenAPI          |
+| Caching       | Spring Cache               |
+| Deployment    | Docker, Render             |
+
+---
+
+# 🧠 System Design Concepts Implemented
+
+* Stateless JWT Authentication
+* Read-heavy system optimization
+* Database indexing
+* Caching strategy
+* Rate limiting
+* URL expiration handling
+* Sequence-based distributed-safe ID generation
+* Layered backend architecture
+
+---
+
+# 📂 Project Structure
+
+```text id="lcbjkn"
+src/main/java/com/example/urlshortner
+│
+├── config
+├── controller
+├── dto
+├── entity
+├── exception
+├── ratelimit
+├── repository
+├── security
+├── service
+└── util
+```
+
+---
+
+# 🚀 Running Locally
+
+## 1️⃣ Clone Repository
+
+```bash id="s7zy6x"
+git clone https://github.com/n200534/urlshortener-.git
+```
+
+---
+
+## 2️⃣ Navigate To Project
+
+```bash id="pqfdsp"
+cd urlshortener-
+```
+
+---
+
+## 3️⃣ Configure Environment Variables
+
+Set:
+
+```properties id="f5k17l"
+DB_URL=
+DB_USERNAME=
+DB_PASSWORD=
+BASE_URL=http://localhost:8080
+```
+
+---
+
+## 4️⃣ Run Application
+
+```bash id="n1r6v5"
+./mvnw spring-boot:run
+```
+
+---
+
+# 🐳 Run Using Docker
+
+## Build & Start
+
+```bash id="c4x3zh"
+docker compose up --build
+```
+
+---
+
+# 📌 Important API Endpoints
+
+| Method | Endpoint                    | Description              |
+| ------ | --------------------------- | ------------------------ |
+| POST   | `/auth/register`            | Register user            |
+| POST   | `/auth/login`               | Login & get JWT          |
+| POST   | `/api/shorten`              | Create short URL         |
+| GET    | `/u/{shortKey}`             | Redirect to original URL |
+| GET    | `/api/analytics/{shortKey}` | Get URL analytics        |
+| GET    | `/api/my-urls`              | Get user URLs            |
+
+---
+
+# 🔥 Example Shorten Request
+
+```json id="hm2w9t"
 {
-  "longUrl": "https://example.com",
-  "customAlias": "myalias",
+  "longUrl": "https://google.com",
+  "customAlias": "google",
   "expiryInMinutes": 60
 }
 ```
 
-Response:
+---
 
-```json
-{
-  "success": true,
-  "message": "URL shortened successfully",
-  "data": "http://localhost:8080/u/myalias"
-}
-```
+# 📈 Future Improvements
+
+* Redis distributed caching
+* Refresh tokens
+* Role-based authorization
+* QR code generation
+* Custom domain support
+* Distributed rate limiting
+* CI/CD pipeline
 
 ---
 
-### 🔹 Redirect
+# 👨‍💻 Author
 
-**GET** `/u/{shortKey}`
+Akshay Kumar Amavarapu
 
-Returns HTTP 302 redirect to the original URL.
-
----
-
-### 🔹 Analytics
-
-**GET** `/api/analytics/{shortKey}`
-
-Response:
-
-```json
-{
-  "shortKey": "abc123",
-  "longUrl": "https://example.com",
-  "clickCount": 15,
-  "createdAt": "2026-02-18T09:00:00",
-  "expiresAt": "2026-02-18T10:00:00"
-}
-```
-
----
-
-## 🗄 Database Schema
-
-Table: `url_mapping`
-
-| Column      | Type      | Description      |
-| ----------- | --------- | ---------------- |
-| id          | BIGINT    | Primary Key      |
-| long_url    | TEXT      | Original URL     |
-| short_key   | VARCHAR   | Unique short key |
-| created_at  | TIMESTAMP | Creation time    |
-| expires_at  | TIMESTAMP | Expiration time  |
-| click_count | BIGINT    | Redirect counter |
-
----
-
-## 🛠 Tech Stack
-
-* Java 17
-* Spring Boot 3
-* Spring Data JPA
-* PostgreSQL
-* Hibernate
-* Lombok
-* Maven
-
----
-
-## 🧪 How to Run Locally
-
-1. Clone the repository
-2. Start PostgreSQL
-3. Update `application.yml` with DB credentials
-4. Run:
-
-```bash
-mvn spring-boot:run
-```
-
-Application runs at:
-
-```
-http://localhost:8080
-```
-
----
-
-## 📈 Scalability Considerations
-
-* Indexed lookup for fast redirect queries
-* Read-heavy system optimization awareness
-* Database sequence ensures global uniqueness
-* Designed for horizontal scaling with load balancer support
-* Ready to integrate caching layer (e.g., Redis)
-
----
-
-## 🔮 Future Enhancements
-
-* Add Redis caching for redirect optimization
-* Add rate limiting
-* Add Swagger / OpenAPI documentation
-* Docker containerization
-* Cloud deployment
-* Monitoring & logging improvements
-
----
-
+* [GitHub Repository](https://github.com/n200534/urlshortener-)
+* [Live API Docs](https://urlshortener-fjvb.onrender.com/swagger-ui/index.html)
